@@ -1,6 +1,34 @@
 # 案件管理系統（Case Management System）
 
-使用 **Angular 22 + NestJS + PostgreSQL** 開發的響應式案件管理系統，提供案件追蹤、狀態管理、資料查詢及員工登入功能。本專案以**前端開發、UI/UX 與 API 整合實作**為重點。
+使用 **Angular 22 + NestJS + PostgreSQL** 開發的響應式案件管理系統，提供案件追蹤、狀態管理、資料查詢及員工登入功能。本專案以 **前端開發、UI/UX 與 API 整合實作** 為重點。
+
+## 畫面展示
+
+### 1. Dashboard
+
+- 顯示總案件數、待處理、進行中、已完成統計
+- 提供案件狀態分布視覺化
+- 顯示待處理案件與最近更新案件摘要
+
+![Dashboard 預覽](docs/screenshots/dashboard.png)
+
+### 2. Projects Management - Desktop
+
+- 支援搜尋與狀態篩選
+- 桌機版使用表格式列表呈現
+- 可快速進入案件管理頁面
+
+![案件管理桌機版](docs/screenshots/projects-desktop.png)
+
+### 3. Projects Management - Mobile
+
+- 手機版改為卡片式版型
+- 保留搜尋、篩選與管理操作
+- 適合行動裝置瀏覽與操作
+
+<p align="center">
+  <img src="docs/screenshots/projects-mobile.png" alt="案件管理手機版" width="260" />
+</p>
 
 ## 主要功能
 
@@ -31,6 +59,10 @@ angular-project/
 │   ├── prisma/           # Schema 與 Migration
 │   └── compose.yaml      # PostgreSQL Docker 設定
 ├── docs/                 # 開發與功能設計文件
+│   └── screenshots/      # 系統畫面截圖
+│       ├── dashboard.png
+│       ├── projects-desktop.png
+│       └── projects-mobile.png
 └── proxy.conf.json       # Angular 開發環境 API Proxy
 ```
 
@@ -50,15 +82,25 @@ npm install
 
 ### 2. 啟動資料庫及設定環境變數
 
-在 `backend` 目錄執行：
+在 `backend` 目錄，先複製環境設定範本：
+
+```cmd
+copy .env.example .env
+```
+
+修改 `backend/.env`，設定本機資料庫密碼、`DATABASE_URL`、`TEST_DATABASE_URL` 與 `CSRF_SECRET`。
+
+`CSRF_SECRET` 必須使用至少 32 bytes 的安全隨機密鑰。
+
+接著啟動資料庫：
 
 ```cmd
 docker compose up -d db
 ```
 
-設定 `backend/.env`，確認 `DATABASE_URL` 與 `CSRF_SECRET` 符合現有後端設定。`CSRF_SECRET` 必須是至少 32 bytes 的安全隨機密鑰。
+其他環境設定請參考 [Backend README](backend/README.md)。
 
-其他環境設定請參考 `backend/README.md`。不要將 `.env` 或任何密碼提交到 GitHub。
+**注意：** 不要將 `.env`、資料庫密碼或任何密鑰提交到 GitHub。
 
 ### 3. 初始化資料庫與管理員
 
@@ -88,7 +130,9 @@ npm run start:dev
 npm run start
 ```
 
-開啟 http://localhost:4200/login。
+開啟：
+
+http://localhost:4200/login
 
 前端透過相對路徑 `/api` 與開發環境 Proxy 串接 NestJS（預設 `127.0.0.1:3000`）。
 
@@ -117,4 +161,4 @@ npm run build
 
 - 案件 API 目前採 **Admin-only** 暫行政策，Manager／Staff 的正式權限尚未開放。
 - 已完成本機登入、Session、CSRF 與案件管理主要流程驗證。
-- 目前屬於**本機開發與作品展示專案**，尚未完成正式部署所需的安全及維運規劃，不應直接用於公司正式生產環境。
+- 目前屬於 **本機開發與作品展示專案**，尚未完成正式部署所需的安全及維運規劃，不應直接用於公司正式生產環境。

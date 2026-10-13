@@ -1,0 +1,53 @@
+<section
+  class="app-intro"
+  [class.app-intro--dragging]="isDragging()"
+  [class.app-intro--settling]="isSettling()"
+  [attr.data-intro-state]="state()"
+  aria-describedby="app-intro-instruction"
+  aria-labelledby="app-intro-title"
+>
+  <div class="app-intro__slices" aria-hidden="true">
+    @for (slice of slices; track slice) {
+      <div
+        class="app-intro__slice"
+        [style.transform]="sliceTransform(slice)"
+        (transitionend)="onSliceTransitionEnd($event, slice)"
+      >
+        <span
+          class="app-intro__slice-image"
+          [style.background-image]="'url(' + landscapeImageUrl + ')'"
+          [style.left]="landscapeOffset(slice)"
+        ></span>
+        <span class="app-intro__slice-overlay"></span>
+      </div>
+    }
+  </div>
+
+  <div
+    class="app-intro__drag-surface"
+    aria-hidden="true"
+    (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp($event)"
+    (pointercancel)="onPointerCancel($event)"
+  ></div>
+
+  <div class="app-intro__content">
+    <button class="app-intro__skip" type="button" (click)="skipIntro()">跳過</button>
+
+    <div
+      class="app-intro__brand"
+      [style.opacity]="brandOpacity()"
+      [style.transform]="brandTransform()"
+    >
+      <p class="app-intro__eyebrow">CASE MANAGEMENT</p>
+      <h1 id="app-intro-title">案件管理</h1>
+      <div class="app-intro__drag-hint">
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4" />
+        </svg>
+        <p id="app-intro-instruction">拖曳以進入，或選擇跳過</p>
+      </div>
+    </div>
+  </div>
+</section>

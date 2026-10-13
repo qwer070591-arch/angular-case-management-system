@@ -1,0 +1,77 @@
+<section class="about-page" aria-labelledby="about-title">
+  <header class="about-page__header">
+    <h1 id="about-title">關於系統</h1>
+    <p>了解案件管理平台的用途、核心功能與技術架構</p>
+  </header>
+
+  <section class="about-intro" aria-labelledby="about-intro-title">
+    <span class="about-intro__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="4" y="4" width="16" height="16" rx="3" />
+        <path d="M8 9h8M8 12h5M8 15h6" />
+      </svg>
+    </span>
+    <div class="about-intro__content">
+      <p class="about-intro__subtitle">Case Management System</p>
+      <h2 id="about-intro-title">案件管理系統</h2>
+      <p class="about-intro__description">以 Angular 開發的響應式案件管理平台，整合案件建立、進度追蹤、狀態管理與資料查詢功能，提供直覺且有效率的管理操作體驗。</p>
+    </div>
+  </section>
+
+  <section class="about-section" aria-labelledby="about-features-title">
+    <div class="about-section__heading">
+      <h2 id="about-features-title">核心功能</h2>
+      <p>從資料概覽到日常案件操作，集中管理所需資訊。</p>
+    </div>
+    <div class="about-features">
+      @for (feature of features; track feature.title) {
+        <article class="about-feature">
+          <span class="about-feature__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path [attr.d]="feature.iconPath" />
+            </svg>
+          </span>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="about-section" aria-labelledby="about-tech-title">
+    <div class="about-section__heading">
+      <h2 id="about-tech-title">技術架構</h2>
+      <p>以明確分工的前後端技術組成案件管理平台。</p>
+    </div>
+    <div class="about-tech">
+      <article class="about-tech__group">
+        <h3>Frontend</h3>
+        <ul class="about-tech__tags" aria-label="前端技術">
+          @for (technology of frontendTechnologies; track technology) {
+            <li>{{ technology }}</li>
+          }
+        </ul>
+      </article>
+      <article class="about-tech__group">
+        <h3>Backend / Database</h3>
+        <ul class="about-tech__tags" aria-label="後端與資料庫技術">
+          @for (technology of backendTechnologies; track technology) {
+            <li>{{ technology }}</li>
+          }
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="about-highlights" aria-labelledby="about-highlights-title">
+    <div>
+      <h2 id="about-highlights-title">專案特色</h2>
+      <p>以可維護的 Angular 架構串接 API，並兼顧表單驗證、跨裝置排版與基本無障礙操作。</p>
+    </div>
+    <ul class="about-highlights__list">
+      @for (highlight of highlights; track highlight) {
+        <li>{{ highlight }}</li>
+      }
+    </ul>
+  </section>
+</section>

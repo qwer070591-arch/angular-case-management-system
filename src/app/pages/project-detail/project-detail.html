@@ -1,0 +1,172 @@
+<section
+  class="project-detail-page"
+  [attr.aria-labelledby]="project() ? 'project-detail-title' : 'project-not-found-title'"
+>
+  @if (loading()) {
+    <p class="request-state" role="status">正在載入案件資訊…</p>
+  } @else if (loadError()) {
+    <div class="request-state" role="alert"><p>{{ loadError() }}</p><button type="button" (click)="reloadProject()">重試</button></div>
+  } @else if (project(); as project) {
+    <a class="project-detail-page__back-link" routerLink="/projects" [queryParams]="listQueryParams()">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m15 18-6-6 6-6" />
+      </svg>
+      返回案件列表
+    </a>
+
+    <header class="project-detail-page__header">
+      <div class="project-detail-page__heading">
+        <p class="project-detail-page__eyebrow">案件管理 / {{ project.projectCode }}</p>
+        <p class="project-detail-page__code">{{ project.projectCode }}</p>
+        <h1 id="project-detail-title">{{ project.name }}</h1>
+        <div class="project-detail-page__meta" aria-label="案件狀態與優先度">
+          <app-status-badge [status]="project.status" />
+          <span
+            class="project-priority"
+            [class.project-priority--low]="project.priority === 'low'"
+            [class.project-priority--medium]="project.priority === 'medium'"
+            [class.project-priority--high]="project.priority === 'high'"
+            [class.project-priority--urgent]="project.priority === 'urgent'"
+          >
+            優先度：{{ priorityLabels[project.priority] }}
+          </span>
+        </div>
+      </div>
+      <a class="project-detail-page__manage-link" [routerLink]="['/projects', project.id, 'edit']" [queryParams]="listQueryParams()">管理案件</a>
+    </header>
+
+    <div
+      class="project-detail-tabs"
+      [class.project-detail-tabs--description]="activeTab() === 'description'"
+      role="tablist"
+      aria-label="案件詳細內容"
+    >
+      <button
+        #detailTabButton
+        id="project-overview-tab"
+        class="project-detail-tabs__tab"
+        [class.project-detail-tabs__tab--active]="activeTab() === 'overview'"
+        type="button"
+        role="tab"
+        [attr.aria-selected]="activeTab() === 'overview'"
+        aria-controls="project-overview-panel"
+        [attr.tabindex]="activeTab() === 'overview' ? 0 : -1"
+        (click)="selectTab('overview')"
+        (keydown)="onTabKeydown($event, 'overview')"
+      >
+        案件概覽
+      </button>
+      <button
+        #detailTabButton
+        id="project-description-tab"
+        class="project-detail-tabs__tab"
+        [class.project-detail-tabs__tab--active]="activeTab() === 'description'"
+        type="button"
+        role="tab"
+        [attr.aria-selected]="activeTab() === 'description'"
+        aria-controls="project-description-panel"
+        [attr.tabindex]="activeTab() === 'description' ? 0 : -1"
+        (click)="selectTab('description')"
+        (keydown)="onTabKeydown($event, 'description')"
+      >
+        案件描述
+      </button>
+      <span class="project-detail-tabs__indicator" aria-hidden="true"></span>
+    </div>
+
+    <section
+      id="project-overview-panel"
+      class="project-detail-tabpanel"
+      [class.project-detail-tabpanel--active]="activeTab() === 'overview'"
+      role="tabpanel"
+      aria-labelledby="project-overview-tab"
+      [attr.tabindex]="activeTab() === 'overview' ? 0 : -1"
+      [hidden]="activeTab() !== 'overview'"
+    >
+      <article class="project-detail-panel project-detail-panel--overview" aria-labelledby="project-information-title">
+        <header class="project-detail-panel__header">
+          <h2 id="project-information-title">案件概覽</h2>
+        </header>
+
+        <dl class="project-information-list project-information-list--overview">
+          <div class="project-information-list__item">
+            <dt>案件編號</dt>
+            <dd class="project-information-list__code">{{ project.projectCode }}</dd>
+          </div>
+          <div class="project-information-list__item">
+            <dt>案件名稱</dt>
+            <dd>{{ project.name }}</dd>
+          </div>
+          <div class="project-information-list__item">
+            <dt>案件狀態</dt>
+            <dd><app-status-badge [status]="project.status" /></dd>
+          </div>
+          <div class="project-information-list__item">
+            <dt>優先級</dt>
+            <dd>{{ priorityLabels[project.priority] }}</dd>
+          </div>
+          <div class="project-information-list__item">
+            <dt>開始日期</dt>
+            <dd>
+              @if (project.startDate) {
+                <time [attr.datetime]="project.startDate">{{ project.startDate | date: 'yyyy/MM/dd' }}</time>
+              } @else {
+                尚未設定
+              }
+            </dd>
+          </div>
+          <div class="project-information-list__item">
+            <dt>預計完成日期</dt>
+            <dd>
+              @if (project.dueDate) {
+                <time [attr.datetime]="project.dueDate">{{ project.dueDate | date: 'yyyy/MM/dd' }}</time>
+              } @else {
+                尚未設定
+              }
+            </dd>
+          </div>
+          <div class="project-information-list__item">
+            <dt>建立時間</dt>
+            <dd><time [attr.datetime]="project.createdAt">{{ project.createdAt | date: 'yyyy/MM/dd HH:mm' }}</time></dd>
+          </div>
+          <div class="project-information-list__item">
+            <dt>最後更新時間</dt>
+            <dd><time [attr.datetime]="project.updatedAt">{{ project.updatedAt | date: 'yyyy/MM/dd HH:mm' }}</time></dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
+    <section
+      id="project-description-panel"
+      class="project-detail-tabpanel"
+      [class.project-detail-tabpanel--active]="activeTab() === 'description'"
+      role="tabpanel"
+      aria-labelledby="project-description-tab"
+      [attr.tabindex]="activeTab() === 'description' ? 0 : -1"
+      [hidden]="activeTab() !== 'description'"
+    >
+      <article class="project-detail-panel project-detail-panel--description" aria-labelledby="project-description-title">
+        <header class="project-detail-panel__header">
+          <h2 id="project-description-title">案件描述</h2>
+        </header>
+
+        @if (project.description) {
+          <p class="project-description">{{ project.description }}</p>
+        } @else {
+          <p class="project-description project-description--empty">尚未提供案件描述</p>
+        }
+      </article>
+    </section>
+  } @else {
+    <section class="project-not-found" aria-labelledby="project-not-found-title">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 8v4M12 16h.01" />
+      </svg>
+      <h1 id="project-not-found-title">找不到案件</h1>
+      <p>此案件不存在，或可能已被刪除。</p>
+      <a class="project-not-found__action" routerLink="/projects" [queryParams]="listQueryParams()">返回案件管理</a>
+    </section>
+  }
+</section>

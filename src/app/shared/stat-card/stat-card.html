@@ -1,0 +1,38 @@
+<article class="stat-card" [class]="cardClass">
+  <div class="stat-card__icon" aria-hidden="true">
+    @switch (accent) {
+      @case ('warning') {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="8.5" />
+          <path d="M12 7.75v4.75l3 1.75" />
+        </svg>
+      }
+      @case ('primary') {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 3.75a8.25 8.25 0 1 0 7.9 10.65" />
+          <path d="M12 7v5h5" />
+          <path d="m15.5 4.5 2 2 3-3" />
+        </svg>
+      }
+      @case ('success') {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+          <circle cx="12" cy="12" r="8.5" />
+          <path d="m8.5 12 2.25 2.25 4.75-5" />
+        </svg>
+      }
+      @default {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="5" y="5" width="10" height="10" rx="1.5" />
+          <path d="M9 9h10v10H9z" />
+        </svg>
+      }
+    }
+  </div>
+  <div class="stat-card__content">
+    <p>{{ label }}</p>
+    <strong [attr.aria-label]="accessibleValue">{{ value }}</strong>
+    @if (detail) {
+      <span>{{ detail }}</span>
+    }
+  </div>
+</article>

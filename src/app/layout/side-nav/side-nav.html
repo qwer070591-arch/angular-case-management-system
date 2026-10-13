@@ -1,0 +1,90 @@
+<aside class="side-nav" aria-label="側邊導覽">
+  <div class="side-nav__header">
+    <a class="side-nav__brand" routerLink="/dashboard" (click)="navigationSelected.emit()">
+      <span class="side-nav__brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="4" y="4" width="16" height="16" rx="3" />
+          <path d="M8 9h8M8 12h5M8 15h6" />
+        </svg>
+      </span>
+      <span class="side-nav__brand-copy">
+        <strong>案件管理</strong>
+        <small>CASE MANAGEMENT</small>
+      </span>
+    </a>
+
+    <button
+      class="side-nav__close-button"
+      type="button"
+      aria-label="關閉導覽選單"
+      (click)="navigationClosed.emit()"
+    >
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </svg>
+    </button>
+  </div>
+
+  <nav id="primary-navigation" class="side-nav__navigation" aria-label="主要導覽">
+    <p class="side-nav__section-label">工作區</p>
+
+    <a
+      class="side-nav__link"
+      routerLink="/dashboard"
+      routerLinkActive="side-nav__link--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      ariaCurrentWhenActive="page"
+      (click)="navigationSelected.emit()"
+    >
+      <svg class="side-nav__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="3.5" y="3.5" width="6" height="6" rx="1" />
+        <rect x="14.5" y="3.5" width="6" height="6" rx="1" />
+        <rect x="3.5" y="14.5" width="6" height="6" rx="1" />
+        <rect x="14.5" y="14.5" width="6" height="6" rx="1" />
+      </svg>
+      <span>Dashboard</span>
+    </a>
+
+    <a
+      class="side-nav__link"
+      routerLink="/projects"
+      routerLinkActive="side-nav__link--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      ariaCurrentWhenActive="page"
+      (click)="navigationSelected.emit()"
+    >
+      <svg class="side-nav__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M8 4.5h8M8 19.5h8M5 8.5h14M5 15.5h14" />
+      </svg>
+      <span>案件管理</span>
+    </a>
+
+    <a
+      class="side-nav__link"
+      routerLink="/projects/new"
+      routerLinkActive="side-nav__link--active"
+      ariaCurrentWhenActive="page"
+      (click)="navigationSelected.emit()"
+    >
+      <svg class="side-nav__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      <span>新增案件</span>
+    </a>
+
+    <a
+      class="side-nav__link"
+      routerLink="/about"
+      routerLinkActive="side-nav__link--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      ariaCurrentWhenActive="page"
+      (click)="navigationSelected.emit()"
+    >
+      <svg class="side-nav__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="12" r="8.5" />
+        <path d="M12 10.5v5M12 7.5h.01" />
+      </svg>
+      <span>關於系統</span>
+    </a>
+  </nav>
+</aside>

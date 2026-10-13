@@ -1,0 +1,197 @@
+:host {
+  display: block;
+}
+
+.app-intro {
+  --intro-commit-duration: 600ms;
+  --intro-release-easing: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --intro-return-duration: 500ms;
+
+  height: 100dvh;
+  left: 0;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.app-intro[data-intro-state='committing'] {
+  --intro-release-duration: var(--intro-commit-duration);
+}
+
+.app-intro[data-intro-state='returning'] {
+  --intro-release-duration: var(--intro-return-duration);
+}
+
+.app-intro__slices {
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: 100%;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+
+.app-intro__slice {
+  background: var(--color-brand);
+  height: 100%;
+  min-width: 0;
+  overflow: clip;
+  position: relative;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.app-intro__slice-image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: block;
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 500%;
+}
+
+.app-intro__slice-overlay {
+  background: var(--color-hero-overlay);
+  inset: 0;
+  position: absolute;
+}
+
+.app-intro__drag-surface {
+  cursor: grab;
+  inset: 0;
+  position: absolute;
+  touch-action: none;
+  user-select: none;
+  z-index: 1;
+}
+
+.app-intro--dragging .app-intro__drag-surface {
+  cursor: grabbing;
+}
+
+.app-intro--settling .app-intro__slice,
+.app-intro--settling .app-intro__brand {
+  transition:
+    transform var(--intro-release-duration) var(--intro-release-easing),
+    opacity var(--intro-release-duration) var(--intro-release-easing);
+}
+
+.app-intro__content {
+  align-items: center;
+  display: grid;
+  inset: 0;
+  justify-items: center;
+  height: 100%;
+  min-height: 0;
+  padding: var(--space-6);
+  pointer-events: none;
+  position: relative;
+  z-index: 2;
+}
+
+.app-intro__brand {
+  max-width: min(100%, 32rem);
+  text-align: center;
+  text-shadow: 0 1px 2px rgb(15 23 42 / 48%);
+}
+
+.app-intro__eyebrow {
+  color: var(--color-sidebar-accent-soft);
+  font-size: var(--text-small);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  margin: 0 0 var(--space-3);
+}
+
+.app-intro__brand h1 {
+  color: var(--color-on-dark);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.app-intro__drag-hint {
+  align-items: center;
+  animation: app-intro-hint-float 2.4s ease-in-out infinite;
+  color: var(--color-on-dark-muted);
+  display: grid;
+  gap: var(--space-2);
+  justify-items: center;
+  margin-top: var(--space-8);
+}
+
+.app-intro__drag-hint svg {
+  fill: none;
+  height: 1.25rem;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.75;
+  width: 1.25rem;
+}
+
+.app-intro__drag-hint p {
+  font-size: var(--text-secondary);
+  margin: 0;
+}
+
+.app-intro__skip {
+  background: rgb(15 23 42 / 36%);
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: var(--radius-sm);
+  color: var(--color-on-dark-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--text-small);
+  font-weight: 700;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  pointer-events: auto;
+  position: absolute;
+  right: var(--space-6);
+  top: var(--space-6);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.app-intro__skip:hover {
+  background: rgb(15 23 42 / 56%);
+  border-color: rgb(255 255 255 / 38%);
+  color: var(--color-on-dark);
+}
+
+@keyframes app-intro-hint-float {
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@media (max-width: 767px) {
+  .app-intro__content {
+    padding: var(--space-4);
+  }
+
+  .app-intro__skip {
+    right: max(var(--space-4), env(safe-area-inset-right));
+    top: max(var(--space-4), env(safe-area-inset-top));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-intro {
+    --intro-commit-duration: 1ms;
+    --intro-return-duration: 1ms;
+  }
+
+  .app-intro__drag-hint {
+    animation: none;
+  }
+}

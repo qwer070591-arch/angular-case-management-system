@@ -1,0 +1,225 @@
+<section
+  class="project-edit-page"
+  [attr.aria-labelledby]="project() ? 'project-edit-title' : loading() || loadError() ? null : 'project-edit-not-found-title'"
+>
+  @if (loading()) {
+    <p class="request-state" role="status">正在載入案件資訊…</p>
+  } @else if (loadError()) {
+    <div class="request-state" role="alert"><p>{{ loadError() }}</p><button type="button" (click)="reloadProject()">重試</button></div>
+  } @else if (project(); as project) {
+    <a class="project-edit-page__back-link" routerLink="/projects" [queryParams]="listQueryParams()">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m15 18-6-6 6-6" />
+      </svg>
+      返回案件列表
+    </a>
+
+    <header class="project-edit-page__header">
+      <h1 #projectTitle id="project-edit-title" tabindex="-1">管理案件</h1>
+      <p class="project-edit-page__project-reference">
+        <span class="project-edit-page__code">{{ project.projectCode }}</span>
+        <span>{{ project.name }}</span>
+      </p>
+      <p>管理案件進度，或更新基本資料與時程安排。</p>
+    </header>
+
+    <section class="project-workflow" aria-labelledby="project-workflow-title">
+      <div class="project-workflow__heading">
+        <h2 id="project-workflow-title">案件進度管理</h2>
+        <app-status-badge [status]="project.status" />
+      </div>
+      <div class="project-workflow__buttons">
+        @if (project.status === 'pending' && canTransition(project.status, 'in_progress')) {
+          <button type="button" class="project-workflow__action project-workflow__action--primary" [disabled]="transitioning() || saving() || !!pendingConfirmation()" (click)="transitionStatus('in_progress')">開始案件</button>
+        }
+        @if (canTransition(project.status, 'completed')) {
+          <button type="button" class="project-workflow__action project-workflow__action--primary" [disabled]="transitioning() || saving() || !!pendingConfirmation()" (click)="transitionStatus('completed')">完成案件</button>
+        }
+        @if (project.status === 'in_progress' && canTransition(project.status, 'pending')) {
+          <button type="button" class="project-workflow__action project-workflow__action--recovery" [disabled]="transitioning() || saving() || !!pendingConfirmation()" (click)="transitionStatus('pending')">退回待處理</button>
+        }
+        @if (project.status === 'completed' && canTransition(project.status, 'in_progress') && !pendingConfirmation()) {
+          <button #confirmationTriggerButton type="button" class="project-workflow__action project-workflow__action--recovery" [disabled]="transitioning() || saving()" (click)="showConfirmation('reopen')">重新開啟案件</button>
+        }
+        @if (project.status === 'cancelled' && canTransition(project.status, 'pending') && !pendingConfirmation()) {
+          <button #confirmationTriggerButton type="button" class="project-workflow__action project-workflow__action--recovery" [disabled]="transitioning() || saving()" (click)="showConfirmation('restore')">恢復案件</button>
+        }
+      </div>
+      @if (canTransition(project.status, 'cancelled') && !pendingConfirmation()) {
+        <div class="project-workflow__danger">
+          <button #confirmationTriggerButton type="button" class="project-workflow__action project-workflow__action--danger" [disabled]="transitioning() || saving()" (click)="showConfirmation('cancel')">取消案件</button>
+        </div>
+      }
+      @if (pendingConfirmation(); as confirmation) {
+        <section class="project-workflow__confirmation" [class.project-workflow__confirmation--recovery]="confirmation !== 'cancel'" aria-labelledby="project-confirmation-title" (keydown.escape)="closeConfirmation()">
+          <h3 id="project-confirmation-title">{{ confirmationContent[confirmation].title }}</h3>
+          <div class="project-workflow__confirmation-actions">
+            <button #confirmTransitionButton type="button" class="project-workflow__action" [disabled]="transitioning() || saving()" [class.project-workflow__action--danger-solid]="confirmation === 'cancel'" [class.project-workflow__action--primary]="confirmation !== 'cancel'" (click)="confirmTransition()">{{ confirmationContent[confirmation].confirmLabel }}</button>
+            <button type="button" class="project-workflow__action project-workflow__action--secondary" [disabled]="transitioning()" (click)="closeConfirmation()">返回</button>
+          </div>
+        </section>
+      }
+      @if (unsavedWarning()) {
+        <div class="project-workflow__warning" role="alert">
+          <p>{{ unsavedWarning() }}</p>
+          <button type="button" class="project-workflow__action project-workflow__action--secondary" (click)="discardChanges()">放棄修改</button>
+        </div>
+      }
+      @if (workflowError()) {
+        <p class="project-workflow__error" role="alert">{{ workflowError() }}</p>
+        <button #reloadWorkflowButton type="button" class="project-workflow__action project-workflow__action--secondary" (click)="reloadProject()">重新取得案件資訊</button>
+      }
+      <p class="sr-only" aria-live="polite" aria-atomic="true">{{ workflowAnnouncement() }}</p>
+    </section>
+
+    <form class="project-edit-form-card" [formGroup]="projectForm" (ngSubmit)="onSubmit()" novalidate>
+      <h2 class="project-edit-form-card__title">案件基本資料</h2>
+      <div class="project-edit-form-card__grid">
+        <div class="project-edit-form-card__field">
+          <label for="project-edit-name">
+            案件名稱
+            <span class="required-indicator" aria-hidden="true">*</span>
+            <span class="sr-only">必填</span>
+          </label>
+          <input
+            #projectNameInput
+            id="project-edit-name"
+            type="text"
+            formControlName="name"
+            maxlength="50"
+            autocomplete="off"
+            required
+            aria-required="true"
+            [attr.aria-invalid]="showNameError"
+            [attr.aria-describedby]="nameDescribedBy"
+          />
+          <p id="project-edit-name-help" class="field-helper">最多 50 個字。</p>
+          @if (showNameError) {
+            <p id="project-edit-name-error" class="field-error" role="alert">{{ nameErrorMessage }}</p>
+          }
+        </div>
+
+        <div class="project-edit-form-card__field">
+          <label for="project-edit-priority">
+            優先級
+            <span class="required-indicator" aria-hidden="true">*</span>
+            <span class="sr-only">必填</span>
+          </label>
+          <select
+            #projectPrioritySelect
+            id="project-edit-priority"
+            formControlName="priority"
+            required
+            aria-required="true"
+            [attr.aria-invalid]="showPriorityError"
+            [attr.aria-describedby]="priorityDescribedBy"
+          >
+            @for (priority of priorityOptions; track priority) {
+              <option [value]="priority">{{ priorityLabels[priority] }}</option>
+            }
+          </select>
+          <p id="project-edit-priority-help" class="field-helper">依案件影響程度設定處理優先順序。</p>
+          @if (showPriorityError) {
+            <p id="project-edit-priority-error" class="field-error" role="alert">{{ serverErrors().priority || '請選擇有效的優先級。' }}</p>
+          }
+        </div>
+
+        <fieldset class="project-edit-form-card__date-fields">
+          <legend>案件時程</legend>
+          <div class="project-edit-form-card__field">
+            <label for="project-edit-start-date">開始日期</label>
+            <input
+              #projectStartDateInput
+              id="project-edit-start-date"
+              type="date"
+              formControlName="startDate"
+              [attr.aria-invalid]="showDateRangeError"
+              [attr.aria-describedby]="startDateDescribedBy"
+            />
+            <p id="project-edit-start-date-help" class="field-helper">選填。</p>
+          </div>
+
+          <div class="project-edit-form-card__field">
+            <label for="project-edit-due-date">預計完成日期</label>
+            <input
+              #projectDueDateInput
+              id="project-edit-due-date"
+              type="date"
+              formControlName="dueDate"
+              [attr.aria-invalid]="showDateRangeError"
+              [attr.aria-describedby]="dueDateDescribedBy"
+            />
+            <p id="project-edit-due-date-help" class="field-helper">選填，且不可早於開始日期。</p>
+            @if (showDateRangeError) {
+              <p id="project-edit-date-range-error" class="field-error" role="alert">{{ serverErrors().startDate || serverErrors().dueDate || '預計完成日期不可早於開始日期。' }}</p>
+            }
+          </div>
+        </fieldset>
+
+        <div class="project-edit-form-card__field project-edit-form-card__field--description">
+          <label for="project-edit-description">案件描述</label>
+          <textarea
+            #projectDescriptionInput
+            id="project-edit-description"
+            formControlName="description"
+            maxlength="4000"
+            rows="7"
+            [attr.aria-invalid]="showDescriptionError"
+            [attr.aria-describedby]="descriptionDescribedBy"
+          ></textarea>
+          <div class="project-edit-form-card__description-meta">
+            <p id="project-edit-description-help" class="field-helper">選填，最多 4,000 個字。</p>
+            <p id="project-edit-description-count" class="field-helper" aria-live="polite">
+              {{ descriptionControl.value.length }} / 4,000
+            </p>
+          </div>
+          @if (showDescriptionError) {
+            <p id="project-edit-description-error" class="field-error" role="alert">{{ serverErrors().description || '案件描述最多 4,000 個字。' }}</p>
+          }
+        </div>
+      </div>
+
+      @if (submissionError()) {
+        <p class="form-error" role="alert">{{ submissionError() }}</p>
+      }
+
+      @if (saveSuccess()) {
+        <p class="project-edit-form-card__success" role="status">{{ saveSuccess() }}</p>
+      }
+
+      <div class="project-edit-form-card__actions">
+        <a class="project-edit-form-card__cancel" routerLink="/projects" [queryParams]="listQueryParams()">取消</a>
+        <button type="button" class="project-edit-form-card__cancel" [disabled]="saving() || navigating() || transitioning() || !!pendingConfirmation()" (click)="saveAndReturn()">儲存並返回列表</button>
+        <button type="submit" class="project-edit-form-card__submit" [disabled]="saving() || navigating() || transitioning() || !!pendingConfirmation()">{{ saving() ? '儲存中…' : '儲存資料變更' }}</button>
+      </div>
+    </form>
+  } @else {
+    <section class="project-edit-not-found" aria-labelledby="project-edit-not-found-title">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 8v4M12 16h.01" />
+      </svg>
+      <h1 id="project-edit-not-found-title">找不到案件</h1>
+      <p>此案件不存在，或可能已被刪除。</p>
+      <a class="project-edit-not-found__action" routerLink="/projects" [queryParams]="listQueryParams()">返回案件管理</a>
+    </section>
+  }
+</section>
+
+<dialog
+  #leaveDialog
+  class="project-edit-leave-dialog"
+  aria-modal="true"
+  aria-labelledby="project-edit-leave-title"
+  aria-describedby="project-edit-leave-description"
+  (cancel)="onLeaveDialogCancel($event)"
+>
+  @if (leaveConfirmationOpen()) {
+    <h2 id="project-edit-leave-title">尚有未儲存的變更</h2>
+    <p id="project-edit-leave-description">離開後，目前尚未儲存的案件資料變更將會遺失。</p>
+    <div class="project-edit-leave-dialog__actions">
+      <button #stayOnPageButton type="button" (click)="stayOnPage()">繼續編輯</button>
+      <button type="button" (click)="discardAndLeave()">放棄變更並離開</button>
+    </div>
+  }
+</dialog>

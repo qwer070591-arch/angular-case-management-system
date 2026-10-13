@@ -1,0 +1,117 @@
+<section class="new-project-page" aria-labelledby="new-project-title">
+  <header class="new-project-page__header">
+    <h1 id="new-project-title">新增案件</h1>
+    <p>建立新的公司案件，初始狀態為待處理</p>
+  </header>
+
+  <form class="project-form-card" [formGroup]="projectForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="project-form-card__field">
+      <label for="project-name">
+        案件名稱
+        <span class="required-indicator" aria-hidden="true">*</span>
+        <span class="sr-only">必填</span>
+      </label>
+      <input
+        #projectNameInput
+        id="project-name"
+        type="text"
+        formControlName="name"
+        maxlength="50"
+        placeholder="例如：企業網站改版"
+        autocomplete="off"
+        required
+        aria-required="true"
+        [attr.aria-invalid]="showNameError"
+        [attr.aria-describedby]="nameDescribedBy"
+      />
+      <p id="project-name-help" class="field-helper">最多 50 個字元。</p>
+      @if (showNameError) {
+        <p id="project-name-error" class="field-error" role="alert">{{ nameErrorMessage }}</p>
+      }
+    </div>
+
+    <div class="project-form-card__field">
+      <label for="project-description">案件描述</label>
+      <textarea
+        #projectDescriptionInput
+        id="project-description"
+        formControlName="description"
+        maxlength="4000"
+        rows="5"
+        placeholder="簡述案件目標與範圍（選填）"
+        [attr.aria-invalid]="showDescriptionError"
+        [attr.aria-describedby]="descriptionDescribedBy"
+      ></textarea>
+      <p id="project-description-help" class="field-helper">選填，最多 4,000 個字元。</p>
+      @if (showDescriptionError) {
+        <p id="project-description-error" class="field-error" role="alert">{{ serverErrors.description || '案件描述不可超過 4,000 個字元' }}</p>
+      }
+    </div>
+
+    <div class="project-form-card__field">
+      <label for="project-priority">
+        優先度
+        <span class="required-indicator" aria-hidden="true">*</span>
+        <span class="sr-only">必填</span>
+      </label>
+      <select
+        #projectPrioritySelect
+        id="project-priority"
+        formControlName="priority"
+        required
+        aria-required="true"
+        [attr.aria-invalid]="showPriorityError"
+        [attr.aria-describedby]="priorityDescribedBy"
+      >
+        @for (priority of priorityOptions; track priority) {
+          <option [value]="priority">{{ priorityLabels[priority] }}</option>
+        }
+      </select>
+      <p id="project-priority-help" class="field-helper">預設為中，可依案件的處理急迫性調整。</p>
+      @if (showPriorityError) {
+        <p id="project-priority-error" class="field-error" role="alert">{{ serverErrors.priority || '請選擇案件優先度' }}</p>
+      }
+    </div>
+
+    <fieldset class="project-form-card__date-fields">
+      <legend>案件時程</legend>
+      <div class="project-form-card__field">
+        <label for="project-start-date">開始日期</label>
+        <input
+          #projectStartDateInput
+          id="project-start-date"
+          type="date"
+          formControlName="startDate"
+          [attr.aria-invalid]="showDateRangeError"
+          [attr.aria-describedby]="startDateDescribedBy"
+        />
+        <p id="project-start-date-help" class="field-helper">選填。</p>
+      </div>
+
+      <div class="project-form-card__field">
+        <label for="project-due-date">預計完成日期</label>
+        <input
+          #projectDueDateInput
+          id="project-due-date"
+          type="date"
+          formControlName="dueDate"
+          [attr.aria-invalid]="showDateRangeError"
+          [attr.aria-describedby]="dueDateDescribedBy"
+        />
+        <p id="project-due-date-help" class="field-helper">選填，且不可早於開始日期。</p>
+        @if (showDateRangeError) {
+          <p id="project-date-range-error" class="field-error" role="alert">{{ serverErrors.startDate || serverErrors.dueDate || '預計完成日期不可早於開始日期' }}</p>
+        }
+      </div>
+    </fieldset>
+
+    @if (submissionError) {
+      <p class="form-error" role="alert">{{ submissionError }}</p>
+    }
+
+    <div class="project-form-card__actions">
+      <button type="submit" class="project-form-card__submit" [disabled]="submitting">{{ submitting ? '建立中…' : '建立案件' }}</button>
+      <a class="project-form-card__cancel" routerLink="/projects">取消</a>
+    </div>
+  </form>
+</section>

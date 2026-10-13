@@ -1,0 +1,242 @@
+:host {
+  display: block;
+}
+
+.dashboard-page {
+  display: grid;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+.dashboard-page__header {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--space-6);
+  justify-content: space-between;
+}
+
+.dashboard-page__heading {
+  min-width: 0;
+}
+
+.dashboard-page__heading h1 {
+  color: var(--color-text);
+  font-size: var(--text-page-title);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.dashboard-page__heading p {
+  color: var(--color-text-secondary);
+  font-size: var(--text-secondary);
+  margin: var(--space-2) 0 0;
+}
+
+.dashboard-kpis {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.dashboard-content {
+  align-items: start;
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: minmax(0, 1.15fr) minmax(19rem, 0.85fr);
+}
+
+.dashboard-sidepanels {
+  display: grid;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.status-overview,
+.pending-projects,
+.recent-projects {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+}
+
+.status-overview {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.status-overview__item {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.status-overview__row {
+  align-items: baseline;
+  display: flex;
+  gap: var(--space-4);
+  justify-content: space-between;
+}
+
+.status-overview__row h3,
+.pending-projects__content h3 {
+  color: var(--color-text);
+  font-size: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.status-overview__row p {
+  color: var(--color-text-secondary);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.status-overview__progress {
+  --progress-color: var(--color-primary);
+
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-full);
+  height: 0.625rem;
+  overflow: hidden;
+}
+
+.status-overview__progress span {
+  background: var(--progress-color);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  min-width: 0;
+  transition: width var(--transition-base);
+}
+
+.status-overview__progress--pending {
+  --progress-color: var(--color-warning);
+}
+
+.status-overview__progress--in-progress {
+  --progress-color: var(--color-primary);
+}
+
+.status-overview__progress--completed {
+  --progress-color: var(--color-success);
+}
+
+.status-overview__progress--cancelled {
+  --progress-color: var(--color-danger);
+}
+
+.pending-projects,
+.recent-projects {
+  border-top: 1px solid var(--color-border);
+}
+
+.pending-projects__item,
+.recent-projects__item {
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  gap: var(--space-4);
+  justify-content: space-between;
+  padding: var(--space-4) 0;
+}
+
+.pending-projects__content,
+.recent-projects__content {
+  min-width: 0;
+}
+
+.pending-projects__content p,
+.recent-projects__content p {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+  margin: 0 0 var(--space-1);
+}
+
+.pending-projects__content h3,
+.recent-projects__content h3 {
+  overflow-wrap: anywhere;
+}
+
+.recent-projects__content time {
+  color: var(--color-text-secondary);
+  display: block;
+  font-size: var(--text-small);
+  margin-top: var(--space-2);
+}
+
+.dashboard-empty-state {
+  align-items: center;
+  color: var(--color-text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  justify-content: center;
+  min-height: 14rem;
+  text-align: center;
+}
+
+.dashboard-empty-state svg {
+  color: var(--color-muted);
+  height: 2rem;
+  width: 2rem;
+}
+
+.dashboard-empty-state p {
+  margin: 0;
+}
+
+.dashboard-empty-state--projects {
+  min-height: 12rem;
+}
+
+@media (max-width: 1023px) {
+  .dashboard-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .dashboard-page {
+    gap: var(--space-6);
+  }
+
+  .dashboard-page__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .dashboard-page__create-link {
+    width: 100%;
+  }
+
+  .dashboard-kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-panel {
+    padding: var(--space-5);
+  }
+
+  .dashboard-panel__header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .dashboard-panel__summary {
+    align-self: flex-start;
+  }
+
+  .dashboard-panel__link {
+    min-height: auto;
+    padding: var(--space-2) 0;
+  }
+}

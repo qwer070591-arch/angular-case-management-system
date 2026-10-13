@@ -1,0 +1,95 @@
+<section class="api-preview" aria-labelledby="api-preview-title">
+  <header class="api-preview__header">
+    <p class="api-preview__eyebrow">開發環境 · 唯讀驗證</p>
+    <h1 id="api-preview-title">Project API 測試畫面</h1>
+    <p>此頁只用來驗證 Angular 與本機 Backend 的 HTTP 讀取；正式案件管理仍使用原有資料來源。</p>
+  </header>
+
+  <div class="api-preview__grid">
+    <section class="api-preview__panel" aria-labelledby="api-preview-list-title">
+      @let list = listState();
+      <div class="api-preview__panel-heading">
+        <div>
+          <h2 id="api-preview-list-title">案件列表</h2>
+          <p>GET /api/projects</p>
+        </div>
+        <button type="button" class="api-preview__button" (click)="loadProjects()" [disabled]="listState().kind === 'loading'">
+          重新讀取
+        </button>
+      </div>
+
+      @if (list.kind === 'loading') {
+        <p class="api-preview__message" role="status">正在讀取案件列表…</p>
+      } @else if (list.kind === 'error') {
+        <div class="api-preview__message api-preview__message--error" role="alert">
+          <p>{{ list.message }}</p>
+          <button type="button" class="api-preview__button" (click)="loadProjects()">重試列表</button>
+        </div>
+      } @else if (list.kind === 'success') {
+        @let response = list.data;
+        @if (response.data.length === 0) {
+          <p class="api-preview__message" role="status">API 回傳空列表，目前沒有案件。</p>
+        } @else {
+          <p class="api-preview__count">本頁 {{ response.data.length }} 筆，共 {{ response.meta.total }} 筆案件</p>
+          <ul class="api-preview__list">
+            @for (project of response.data; track project.id) {
+              <li>
+                <button type="button" class="api-preview__project" (click)="loadProject(project.id.toString())">
+                  <span>
+                    <strong>{{ project.name }}</strong>
+                    <small>{{ project.projectCode }} · ID {{ project.id }}</small>
+                  </span>
+                  <app-status-badge [status]="project.status" />
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      }
+    </section>
+
+    <section class="api-preview__panel" aria-labelledby="api-preview-detail-title">
+      @let detail = detailState();
+      <div class="api-preview__panel-heading">
+        <div>
+          <h2 id="api-preview-detail-title">單筆案件</h2>
+          <p>GET /api/projects/:id</p>
+        </div>
+      </div>
+
+      <form class="api-preview__lookup" (submit)="$event.preventDefault(); loadProject(projectId.value)">
+        <label for="api-preview-project-id">案件 ID</label>
+        <div class="api-preview__lookup-row">
+          <input id="api-preview-project-id" #projectId type="text" inputmode="numeric" [value]="requestedId()" autocomplete="off" />
+          <button type="submit" class="api-preview__button api-preview__button--primary" [disabled]="detailState().kind === 'loading'">讀取案件</button>
+        </div>
+      </form>
+
+      @if (detail.kind === 'idle') {
+        <p class="api-preview__message">輸入 ID，或從左側列表選取案件。</p>
+      } @else if (detail.kind === 'loading') {
+        <p class="api-preview__message" role="status">正在讀取案件資料…</p>
+      } @else if (detail.kind === 'error') {
+        <div class="api-preview__message api-preview__message--error" role="alert">
+          <p>{{ detail.message }}</p>
+          @if (lastRequestedId() !== null) {
+            <button type="button" class="api-preview__button" (click)="retryProject()">重試單筆</button>
+          }
+        </div>
+      } @else if (detail.kind === 'success') {
+        @let project = detail.data;
+        <dl class="api-preview__details">
+          <div><dt>案件編號</dt><dd>{{ project.projectCode }}</dd></div>
+          <div><dt>案件名稱</dt><dd>{{ project.name }}</dd></div>
+          <div><dt>狀態</dt><dd><app-status-badge [status]="project.status" /></dd></div>
+          <div><dt>優先級</dt><dd>{{ project.priority }}</dd></div>
+          <div><dt>描述</dt><dd>{{ project.description ?? '未提供' }}</dd></div>
+          <div><dt>開始日期</dt><dd>{{ project.startDate ?? '未設定' }}</dd></div>
+          <div><dt>預計完成日期</dt><dd>{{ project.dueDate ?? '未設定' }}</dd></div>
+          <div><dt>建立時間</dt><dd>{{ project.createdAt }}</dd></div>
+          <div><dt>最後更新</dt><dd>{{ project.updatedAt }}</dd></div>
+        </dl>
+      }
+    </section>
+  </div>
+</section>

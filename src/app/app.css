@@ -1,0 +1,19 @@
+:host {
+  display: block;
+}
+
+.app-root,
+.app-root__content {
+  min-height: 100dvh;
+}
+
+.app-root--intro-active {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.app-root--intro-active .app-root__content {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}

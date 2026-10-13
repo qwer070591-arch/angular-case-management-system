@@ -1,0 +1,207 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.api-preview {
+  display: grid;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.api-preview__header h1 {
+  font-size: var(--text-page-title);
+  line-height: 1.2;
+  margin: var(--space-2) 0;
+}
+
+.api-preview__header p,
+.api-preview__panel-heading p {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.api-preview__header .api-preview__eyebrow {
+  color: var(--color-primary);
+  font-size: var(--text-small);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.api-preview__grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.api-preview__panel {
+  background: var(--color-surface);
+  border: var(--border-default);
+  border-radius: var(--radius-lg);
+  min-width: 0;
+  padding: var(--space-6);
+}
+
+.api-preview__panel-heading,
+.api-preview__lookup-row,
+.api-preview__project {
+  align-items: center;
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+
+.api-preview__panel-heading h2 {
+  font-size: var(--text-section-title);
+  margin: 0;
+}
+
+.api-preview__panel-heading p {
+  font-size: var(--text-secondary);
+}
+
+.api-preview__button {
+  background: var(--color-surface);
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  cursor: pointer;
+  flex: none;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-4);
+}
+
+.api-preview__button:hover:not(:disabled),
+.api-preview__project:hover {
+  background: var(--color-hover);
+}
+
+.api-preview__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.api-preview__button--primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.api-preview__button--primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.api-preview__message {
+  color: var(--color-text-secondary);
+  margin: var(--space-6) 0 0;
+}
+
+.api-preview__message--error {
+  background: var(--color-danger-soft);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-danger);
+  padding: var(--space-4);
+}
+
+.api-preview__message--error p {
+  margin: 0 0 var(--space-3);
+}
+
+.api-preview__count {
+  color: var(--color-text-secondary);
+  font-size: var(--text-secondary);
+  margin: var(--space-6) 0 var(--space-3);
+}
+
+.api-preview__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.api-preview__list li + li {
+  border-top: var(--border-default);
+}
+
+.api-preview__project {
+  background: transparent;
+  border: 0;
+  color: var(--color-text);
+  cursor: pointer;
+  min-width: 0;
+  padding: var(--space-4) var(--space-2);
+  text-align: left;
+  width: 100%;
+}
+
+.api-preview__project span {
+  display: grid;
+  min-width: 0;
+}
+
+.api-preview__project strong,
+.api-preview__project small,
+.api-preview__details dd {
+  overflow-wrap: anywhere;
+}
+
+.api-preview__project small {
+  color: var(--color-text-secondary);
+}
+
+.api-preview__lookup {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+.api-preview__lookup label {
+  font-size: var(--text-secondary);
+  font-weight: 700;
+}
+
+.api-preview__lookup input {
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+  flex: 1;
+  min-height: 40px;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+}
+
+.api-preview__details {
+  display: grid;
+  margin: var(--space-6) 0 0;
+}
+
+.api-preview__details div {
+  border-top: var(--border-default);
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: minmax(110px, 35%) minmax(0, 1fr);
+  padding: var(--space-3) 0;
+}
+
+.api-preview__details dt {
+  color: var(--color-text-secondary);
+}
+
+.api-preview__details dd {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 767px) {
+  .api-preview__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .api-preview__panel {
+    padding: var(--space-4);
+  }
+
+  .api-preview__panel-heading {
+    align-items: flex-start;
+  }
+}

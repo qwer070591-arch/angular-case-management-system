@@ -1,0 +1,35 @@
+<header class="topbar">
+  <div class="topbar__leading">
+    <button
+      class="topbar__menu-button"
+      type="button"
+      [attr.aria-label]="isMobileNavigationOpen ? '關閉主選單' : '開啟主選單'"
+      aria-controls="primary-navigation"
+      [attr.aria-expanded]="isMobileNavigationOpen"
+      (click)="menuClicked.emit()"
+    >
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+    </button>
+    <p class="topbar__title">{{ title }}</p>
+  </div>
+
+  @if (auth.currentUser(); as user) {
+    <div class="topbar__account">
+      <div class="topbar__user" [attr.aria-label]="'目前使用者：' + user.name + '，' + roleLabels[user.role]">
+        <span class="topbar__avatar" aria-hidden="true">{{ user.name.charAt(0) }}</span>
+        <span class="topbar__user-details">
+          <span class="topbar__user-name">{{ user.name }}</span>
+          <span class="topbar__user-role">{{ roleLabels[user.role] }}</span>
+        </span>
+      </div>
+      <button class="topbar__logout" type="button" [disabled]="loggingOut()" (click)="logout()">
+        {{ loggingOut() ? '登出中…' : '登出' }}
+      </button>
+    </div>
+  }
+</header>
+@if (logoutError()) {
+  <p class="topbar__error" role="alert">{{ logoutError() }}</p>
+}

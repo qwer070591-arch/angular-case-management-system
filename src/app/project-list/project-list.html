@@ -1,0 +1,103 @@
+<section class="project-list" aria-labelledby="project-list-title">
+  <div class="project-list__heading">
+    <div>
+      <h2 id="project-list-title">案件列表</h2>
+      <p aria-live="polite">共 {{ total ?? projects.length }} 筆案件</p>
+    </div>
+  </div>
+
+  @if (projects.length > 0) {
+    <div class="project-table-container">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">案件編號</th>
+            <th scope="col">案件名稱</th>
+            <th scope="col">案件狀態</th>
+            <th scope="col" class="project-table__actions-heading">操作</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (project of projects; track project.id) {
+            <tr>
+              <td><span class="project-id">{{ project.projectCode }}</span></td>
+              <td class="project-name">
+                <a class="project-name__link" [routerLink]="['/projects', project.id]" [queryParams]="listQueryParams">{{ project.name }}</a>
+              </td>
+              <td><app-status-badge [status]="project.status" /></td>
+              <td>
+                <div class="project-actions">
+                  <a
+                    class="project-action project-action--edit"
+                    [routerLink]="['/projects', project.id, 'edit']"
+                    [queryParams]="listQueryParams"
+                  >
+                    管理
+                  </a>
+                  <button
+                    type="button"
+                    class="project-action project-action--delete"
+                    (click)="requestDelete(project.id, $event)"
+                  >
+                    刪除
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="project-cards" aria-label="案件列表">
+      @for (project of projects; track project.id) {
+        <article class="project-card" [attr.aria-labelledby]="'project-name-' + project.id">
+          <div class="project-card__header">
+            <div>
+              <p class="project-card__id">案件編號 {{ project.projectCode }}</p>
+              <h3 [id]="'project-name-' + project.id">
+                <a class="project-card__name-link" [routerLink]="['/projects', project.id]" [queryParams]="listQueryParams">{{ project.name }}</a>
+              </h3>
+            </div>
+            <app-status-badge [status]="project.status" />
+          </div>
+          <div class="project-card__actions">
+            <a
+              class="project-action project-action--edit"
+              [routerLink]="['/projects', project.id, 'edit']"
+              [queryParams]="listQueryParams"
+            >
+              管理
+            </a>
+            <button
+              type="button"
+              class="project-action project-action--delete"
+              (click)="requestDelete(project.id, $event)"
+            >
+              刪除
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  } @else {
+    <section class="empty-state" aria-labelledby="empty-state-title">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+        <path d="M4 5.75A1.75 1.75 0 0 1 5.75 4h12.5A1.75 1.75 0 0 1 20 5.75v12.5A1.75 1.75 0 0 1 18.25 20H5.75A1.75 1.75 0 0 1 4 18.25V5.75Z" />
+        <path d="M8 9h8M8 13h5" />
+      </svg>
+      @if (hasActiveFilters) {
+        <h3 id="empty-state-title">找不到符合條件的案件</h3>
+        <p>請調整搜尋關鍵字或狀態篩選條件。</p>
+        <button type="button" class="empty-state__action empty-state__action--secondary" (click)="clearFilters.emit()">
+          清除篩選
+        </button>
+      } @else {
+        <h3 id="empty-state-title">目前尚無案件</h3>
+        <p>建立第一筆案件後，就能在這裡追蹤處理進度。</p>
+        <a class="empty-state__action empty-state__action--primary" routerLink="/projects/new">新增案件</a>
+      }
+    </section>
+  }
+</section>

@@ -1,0 +1,154 @@
+<section class="dashboard-page" aria-labelledby="dashboard-title">
+  <header class="dashboard-page__header">
+    <div class="dashboard-page__heading">
+      <h1 id="dashboard-title">Dashboard</h1>
+      <p>快速掌握案件進度與目前工作狀態</p>
+    </div>
+
+    <a class="dashboard-page__create-link" routerLink="/projects/new">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      <span>新增案件</span>
+    </a>
+  </header>
+
+  @if (statsLoading()) {
+    <p class="request-state" role="status">正在載入案件統計…</p>
+  } @else if (statsError()) {
+    <div class="request-state" role="alert"><p>{{ statsError() }}</p><button type="button" (click)="loadStats()">重試</button></div>
+  } @else if (metrics; as metrics) {
+  <section class="dashboard-kpis" aria-label="案件統計">
+    <app-stat-card label="總案件數" [value]="metrics.total" accent="neutral" />
+    <app-stat-card label="待處理" [value]="metrics.pending" accent="warning" />
+    <app-stat-card label="進行中" [value]="metrics.inProgress" accent="primary" />
+    <app-stat-card
+      label="已完成"
+      [value]="metrics.completed"
+      [detail]="'完成率 ' + metrics.completionRate + '%'"
+      accent="success"
+    />
+  </section>
+  }
+
+  <div class="dashboard-content">
+    @if (statsLoading()) {
+      <p class="request-state" role="status">正在載入案件狀態…</p>
+    } @else if (statsError()) {
+      <p class="request-state" role="alert">案件狀態暫時無法顯示。</p>
+    } @else if (metrics; as metrics) {
+    <section class="dashboard-panel dashboard-panel--status" aria-labelledby="status-overview-title">
+      <div class="dashboard-panel__header">
+        <div>
+          <h2 id="status-overview-title">案件狀態</h2>
+          <p>依目前案件數量計算的狀態分布</p>
+        </div>
+        <p class="dashboard-panel__summary">完成率 {{ metrics.completionRate }}%</p>
+      </div>
+
+      <ul class="status-overview" aria-label="案件狀態統計">
+        @for (item of statusOverview; track item.status) {
+          <li class="status-overview__item">
+            <div class="status-overview__row">
+              <h3>{{ statusLabels[item.status] }}</h3>
+              <p>{{ item.count }} 筆・{{ item.percentage }}%</p>
+            </div>
+            <div
+              class="status-overview__progress"
+              [class.status-overview__progress--pending]="item.status === 'pending'"
+              [class.status-overview__progress--in-progress]="item.status === 'in_progress'"
+              [class.status-overview__progress--completed]="item.status === 'completed'"
+              [class.status-overview__progress--cancelled]="item.status === 'cancelled'"
+              role="progressbar"
+              [attr.aria-label]="statusLabels[item.status] + '案件占比'"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              [attr.aria-valuenow]="item.percentage"
+              [attr.aria-valuetext]="statusLabels[item.status] + ' ' + item.count + ' 筆，' + item.percentage + '%'"
+            >
+              <span [style.width.%]="item.percentage"></span>
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
+    }
+    <div class="dashboard-sidepanels">
+      <section class="dashboard-panel dashboard-panel--pending" aria-labelledby="pending-projects-title">
+        <div class="dashboard-panel__header">
+          <div>
+            <h2 id="pending-projects-title">待處理案件</h2>
+            <p>優先掌握尚未開始的案件</p>
+          </div>
+          <a class="dashboard-panel__link" routerLink="/projects">查看全部案件</a>
+        </div>
+
+        @if (pendingLoading()) {
+          <p class="request-state" role="status">正在載入待處理案件…</p>
+        } @else if (pendingError()) {
+          <div class="request-state" role="alert"><p>{{ pendingError() }}</p><button type="button" (click)="loadPending()">重試</button></div>
+        } @else if (pendingProjects().length > 0) {
+          <ul class="pending-projects">
+            @for (project of pendingProjects(); track project.id) {
+              <li class="pending-projects__item">
+                <div class="pending-projects__content">
+                  <p>案件編號 {{ project.projectCode }}</p>
+                  <h3>{{ project.name }}</h3>
+                </div>
+                <app-status-badge [status]="project.status" />
+              </li>
+            }
+          </ul>
+        } @else {
+          <div class="dashboard-empty-state">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <path d="M4 5.75A1.75 1.75 0 0 1 5.75 4h12.5A1.75 1.75 0 0 1 20 5.75v12.5A1.75 1.75 0 0 1 18.25 20H5.75A1.75 1.75 0 0 1 4 18.25V5.75Z" />
+              <path d="m8 12 2.25 2.25L16 8.5" />
+            </svg>
+            <p>目前沒有待處理案件</p>
+          </div>
+        }
+      </section>
+
+      <section class="dashboard-panel dashboard-panel--recent" aria-labelledby="recent-projects-title">
+        <div class="dashboard-panel__header">
+          <div>
+            <h2 id="recent-projects-title">最近更新案件</h2>
+            <p>依最近異動時間排序</p>
+          </div>
+          <a class="dashboard-panel__link" routerLink="/projects">查看全部案件</a>
+        </div>
+
+        @if (recentLoading()) {
+          <p class="request-state" role="status">正在載入最近更新案件…</p>
+        } @else if (recentError()) {
+          <div class="request-state" role="alert"><p>{{ recentError() }}</p><button type="button" (click)="loadRecent()">重試</button></div>
+        } @else if (recentlyUpdatedProjects().length > 0) {
+          <ul class="recent-projects">
+            @for (project of recentlyUpdatedProjects(); track project.id) {
+              <li class="recent-projects__item">
+                <div class="recent-projects__content">
+                  <p>案件編號 {{ project.projectCode }}</p>
+                  <h3>{{ project.name }}</h3>
+                  <time [attr.datetime]="project.updatedAt">
+                    最近更新：{{ project.updatedAt | date: 'yyyy/MM/dd HH:mm' }}
+                  </time>
+                </div>
+                <app-status-badge [status]="project.status" />
+              </li>
+            }
+          </ul>
+        } @else {
+          <div class="dashboard-empty-state dashboard-empty-state--projects">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <path d="M4 5.75A1.75 1.75 0 0 1 5.75 4h12.5A1.75 1.75 0 0 1 20 5.75v12.5A1.75 1.75 0 0 1 18.25 20H5.75A1.75 1.75 0 0 1 4 18.25V5.75Z" />
+              <path d="M8 9h8M8 13h5" />
+            </svg>
+            <p>目前尚無案件</p>
+            <a class="dashboard-empty-state__action" routerLink="/projects/new">新增案件</a>
+          </div>
+        }
+      </section>
+    </div>
+  </div>
+</section>

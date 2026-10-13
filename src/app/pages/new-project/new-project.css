@@ -1,0 +1,48 @@
+:host {
+  display: block;
+}
+
+.new-project-page {
+  display: grid;
+  gap: var(--space-8);
+  max-width: 42rem;
+  min-width: 0;
+}
+
+.new-project-page__header h1 {
+  color: var(--color-text);
+  font-size: var(--text-page-title);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.new-project-page__header p {
+  color: var(--color-text-secondary);
+  font-size: var(--text-secondary);
+  margin: var(--space-2) 0 0;
+}
+
+.project-form-card textarea {
+  min-height: 7.5rem;
+}
+
+.project-form-card input::placeholder {
+  color: var(--color-muted);
+}
+
+.project-form-card__date-fields legend {
+  margin-bottom: var(--space-3);
+}
+
+@media (max-width: 767px) {
+  .new-project-page {
+    gap: var(--space-6);
+  }
+
+  .project-form-card__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

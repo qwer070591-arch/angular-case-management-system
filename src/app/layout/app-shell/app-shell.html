@@ -1,0 +1,38 @@
+<a class="skip-link" href="#main-content" [attr.inert]="mobileDrawerOpen() ? '' : null">跳至主要內容</a>
+
+<div class="app-shell" [class.app-shell--mobile-nav-open]="mobileDrawerOpen()">
+  <app-side-nav
+    #sideNav
+    [attr.inert]="!isDesktop() && !mobileDrawerOpen() ? '' : null"
+    [attr.role]="mobileDrawerOpen() ? 'dialog' : null"
+    [attr.aria-modal]="mobileDrawerOpen() ? 'true' : null"
+    [attr.aria-label]="mobileDrawerOpen() ? '主要導覽選單' : null"
+    (navigationSelected)="closeMobileNavigation()"
+    (navigationClosed)="closeMobileNavigation()"
+  />
+
+  <div class="app-shell__content" [attr.inert]="mobileDrawerOpen() ? '' : null">
+    <app-topbar
+      #topbar
+      [title]="pageTitle()"
+      [isMobileNavigationOpen]="mobileDrawerOpen()"
+      (menuClicked)="toggleMobileNavigation()"
+    />
+
+    <main id="main-content" class="app-shell__main" tabindex="-1">
+      <div class="app-shell__main-inner">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+
+  <button
+    class="app-shell__backdrop"
+    type="button"
+    aria-label="關閉導覽選單"
+    aria-hidden="true"
+    tabindex="-1"
+    [attr.inert]="mobileDrawerOpen() ? null : ''"
+    (click)="closeMobileNavigation()"
+  ></button>
+</div>

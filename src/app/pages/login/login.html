@@ -1,0 +1,59 @@
+<main class="login-page">
+  <section class="login-card" aria-labelledby="login-title">
+    <div class="login-card__brand">
+      <span class="login-card__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="4" y="4" width="16" height="16" rx="3" />
+          <path d="M8 9h8M8 12h5M8 15h6" />
+        </svg>
+      </span>
+      <span>案件管理 <small>CASE MANAGEMENT</small></span>
+    </div>
+    <h1 id="login-title">員工登入</h1>
+    <p class="login-card__intro">使用公司員工帳號登入案件管理系統。</p>
+
+    @if (auth.status() === 'checking') {
+      <p class="login-card__status" role="status">正在確認登入狀態…</p>
+    } @else if (auth.status() === 'unavailable') {
+      <div class="login-card__notice" role="alert">
+        <p>{{ auth.checkError() }}</p>
+        <button type="button" (click)="retrySession()">重新檢查</button>
+      </div>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="login-card__field">
+          <label for="login-email">Email</label>
+          <input id="login-email" type="email" formControlName="email" autocomplete="username"
+            inputmode="email" [attr.aria-invalid]="emailInvalid"
+            [attr.aria-describedby]="emailInvalid ? 'login-email-error' : null" />
+          @if (emailInvalid) {
+            <p id="login-email-error" class="login-card__field-error">請輸入有效的 Email。</p>
+          }
+        </div>
+        <div class="login-card__field">
+          <label for="login-password">密碼</label>
+          <div class="login-card__password-row">
+            <input id="login-password" [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password" autocomplete="current-password"
+              [attr.aria-invalid]="passwordInvalid"
+              [attr.aria-describedby]="passwordInvalid ? 'login-password-error' : null" />
+            <button type="button" class="login-card__reveal"
+              [attr.aria-label]="showPassword() ? '隱藏密碼' : '顯示密碼'"
+              [attr.aria-pressed]="showPassword()" (click)="showPassword.set(!showPassword())">
+              {{ showPassword() ? '隱藏' : '顯示' }}
+            </button>
+          </div>
+          @if (passwordInvalid) {
+            <p id="login-password-error" class="login-card__field-error">請輸入密碼。</p>
+          }
+        </div>
+        @if (error()) {
+          <p class="login-card__error" role="alert">{{ error() }}</p>
+        }
+        <button class="login-card__submit" type="submit" [disabled]="submitting()">
+          {{ submitting() ? '登入中…' : '登入' }}
+        </button>
+      </form>
+    }
+  </section>
+</main>

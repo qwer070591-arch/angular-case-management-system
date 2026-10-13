@@ -1,0 +1,127 @@
+:host {
+  display: block;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--topbar-height);
+  padding: 0 var(--space-8);
+  border-bottom: var(--border-default);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.topbar__leading,
+.topbar__user {
+  display: flex;
+  align-items: center;
+}
+
+.topbar__account { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.topbar__user-details { display: grid; line-height: 1.25; min-width: 0; }
+.topbar__user-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 12rem; }
+.topbar__user-role { color: var(--color-text-secondary); font-size: var(--text-small); font-weight: 500; }
+.topbar__logout {
+  background: var(--color-surface); border: var(--border-default); border-radius: var(--radius-sm);
+  color: var(--color-text-secondary); cursor: pointer; min-height: 44px; padding: 0 var(--space-3);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+.topbar__logout:hover:not(:disabled) { background: var(--color-hover); color: var(--color-text); }
+.topbar__logout:disabled { cursor: not-allowed; opacity: .6; }
+.topbar__error { background: var(--color-danger-soft); color: var(--color-danger); margin: 0; padding: var(--space-2) var(--space-4); font-size: var(--text-small); }
+
+.topbar__leading {
+  min-width: 0;
+  gap: var(--space-3);
+}
+
+.topbar__title {
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar__menu-button {
+  display: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.topbar__menu-button:hover {
+  background: var(--color-hover);
+}
+
+.topbar__menu-button svg {
+  width: 22px;
+  height: 22px;
+}
+
+.topbar__user {
+  flex: 0 0 auto;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding-left: var(--space-4);
+  border-left: var(--border-default);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.topbar__avatar {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--color-sidebar-accent-soft);
+  border-radius: 50%;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-hover);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (max-width: 1023px) {
+  .topbar {
+    padding: 0 var(--space-6);
+  }
+
+  .topbar__menu-button {
+    display: inline-grid;
+    place-items: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .topbar {
+    padding: 0 var(--space-4);
+  }
+
+  .topbar__user {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .topbar__user-details { display: none; }
+  .topbar__account { gap: var(--space-2); }
+  .topbar__logout { padding-inline: var(--space-2); }
+}
+
+@media (min-width: 1440px) {
+  .topbar {
+    padding: 0 var(--space-12);
+  }
+}

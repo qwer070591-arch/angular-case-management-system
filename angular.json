@@ -22,6 +22,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
               }
             ],
             "styles": [
@@ -30,6 +35,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/dev-preview.routes.ts",
+                  "with": "src/app/dev-preview.routes.production.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -59,7 +70,8 @@
               "buildTarget": "angular-project:build:production"
             },
             "development": {
-              "buildTarget": "angular-project:build:development"
+              "buildTarget": "angular-project:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
